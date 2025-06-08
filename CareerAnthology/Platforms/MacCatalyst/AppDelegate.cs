@@ -1,0 +1,11 @@
+﻿using CareerAnthology;
+using Foundation;
+
+namespace CareerAnthology
+{
+    [Register("AppDelegate")]
+    public class AppDelegate : MauiUIApplicationDelegate
+    {
+        protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+    }
+}
