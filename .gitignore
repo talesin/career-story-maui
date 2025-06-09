@@ -1,4 +1,4 @@
-./CareerAnthology/appsettings.json
+CareerAnthology/appsettings.json
 
 # Visual Studio
 .vs/
@@ -99,3 +99,5 @@ UpgradeLog*.XML
 crashlytics-build.properties
 
 # End of Visual Studio ignores
+
+*.swp

@@ -53,7 +53,7 @@ namespace StoryMaker
     public record StoryScorePrompt(string StoryText)
     {
         private readonly string prompt = @$"""
-Please evaluate the following career story using the STAR format rubric. Rate each of the listed dimensions on a scale from 1 (Weak) to 5 (Excellent), and provide a short explanation for each rating. At the end, provide a total score out of 30 and suggest 1–2 areas for improvement. Format the response as JSON using the specific schema.
+Please critically evaluate the following career story using the STAR format rubric. Rate each of the listed dimensions on a scale from 1 (Weak) to 5 (Excellent), and provide a short explanation for each rating. At the end, provide a total score out of 30 and suggest 1–2 areas for improvement. Format the response as JSON using the specific schema.
 
 Rubric Dimensions
 •	Situation Clarity: Is the context clear and relevant?
