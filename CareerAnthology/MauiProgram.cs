@@ -7,7 +7,6 @@ namespace CareerAnthology
     {
         public static MauiApp CreateMauiApp()
         {
-            Console.WriteLine($"{Environment.CurrentDirectory}");
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -15,12 +14,22 @@ namespace CareerAnthology
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                })
-                .Configuration.AddJsonFile("appsettings.json");
+                });
+
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            builder.Configuration.AddConfiguration(config);
+
+            builder.Logging.AddConsole();
+
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
+
+            builder.Services.AddSingleton<MainPage>();
 
             return builder.Build();
         }

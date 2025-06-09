@@ -45,6 +45,9 @@ namespace StoryMaker
 
         [JsonIgnore]
         public int TotalScore => (int)Relevance.Score + (int)Ownership.Score + (int)Complexity.Score + (int)Influence.Score + (int)Outcome.Score + (int)Reflection.Score;
+
+        [JsonIgnore]
+        public int PercentageScore => (int)((TotalScore / 30.0) * 100);
     }
 
     public record StoryScorePrompt(string StoryText)

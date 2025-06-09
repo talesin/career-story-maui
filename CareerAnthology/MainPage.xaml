@@ -3,37 +3,58 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
              x:Class="CareerAnthology.MainPage">  
 
-    <Grid Padding="30">  
-        <Grid.RowDefinitions>  
-            <RowDefinition Height="Auto" />  
-            <RowDefinition Height="Auto" />  
-            <RowDefinition Height="Auto" />  
-        </Grid.RowDefinitions>  
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
+    <VerticalStackLayout Padding="30" Spacing="16">
         <Editor  
             x:Name="Story"  
             Placeholder="Enter your story here..."  
             AutoSize="TextChanges"  
             HeightRequest="250"  
             FontSize="18"  
-            Grid.Row="1" Grid.ColumnSpan="2" />  
+            TextChanged="OnStoryTextChanged" />  
 
-        <Button  
-            x:Name="Score"  
-            Text="Score"  
-            Clicked="OnScoreClicked"  
-            HorizontalOptions="Fill"  
-            Grid.Row="2" Grid.Column="0" />  
+        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">  
+            <Button  
+                x:Name="Score"  
+                Text="Score"  
+                Clicked="OnScoreClicked"  
+                Grid.Column="0"  
+                IsEnabled="False" />  
 
-        <Button  
-            x:Name="Review"  
-            Text="Review"  
-            Clicked="OnReviewClicked"  
-            HorizontalOptions="Fill"  
-            Grid.Row="2" Grid.Column="1" />  
-    </Grid>  
+            <Button  
+                x:Name="Review"  
+                Text="Review"  
+                Clicked="OnReviewClicked"  
+                Grid.Column="1"  
+                IsEnabled="False" />  
+        </Grid>  
+
+        <!-- Scrollable section for StoryScore display fields -->  
+        <ScrollView HeightRequest="300">  
+            <VerticalStackLayout Spacing="8">  
+                <Label Text="Relevance:" FontAttributes="Bold" />  
+                <Label x:Name="RelevanceLabel" Text="" />  
+
+                <Label Text="Ownership:" FontAttributes="Bold" />  
+                <Label x:Name="OwnershipLabel" Text="" />  
+
+                <Label Text="Complexity:" FontAttributes="Bold" />  
+                <Label x:Name="ComplexityLabel" Text="" />  
+
+                <Label Text="Influence:" FontAttributes="Bold" />  
+                <Label x:Name="InfluenceLabel" Text="" />  
+
+                <Label Text="Outcome:" FontAttributes="Bold" />  
+                <Label x:Name="OutcomeLabel" Text="" />  
+
+                <Label Text="Reflection:" FontAttributes="Bold" />  
+                <Label x:Name="ReflectionLabel" Text="" />  
+
+                <Label Text="Areas For Improvement:" FontAttributes="Bold" />  
+                <Label x:Name="AreasForImprovmentLabel" Text="" />  
+
+                <Label Text="Total Score:" FontAttributes="Bold" />  
+                <Label x:Name="TotalScoreLabel" Text="" />  
+            </VerticalStackLayout>  
+        </ScrollView>  
+    </VerticalStackLayout>  
 </ContentPage>
