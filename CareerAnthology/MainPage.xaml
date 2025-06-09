@@ -28,33 +28,7 @@
                 IsEnabled="False" />  
         </Grid>  
 
-        <!-- Scrollable section for StoryScore display fields -->  
-        <ScrollView HeightRequest="300">  
-            <VerticalStackLayout Spacing="8">  
-                <Label Text="Relevance:" FontAttributes="Bold" />  
-                <Label x:Name="RelevanceLabel" Text="" />  
-
-                <Label Text="Ownership:" FontAttributes="Bold" />  
-                <Label x:Name="OwnershipLabel" Text="" />  
-
-                <Label Text="Complexity:" FontAttributes="Bold" />  
-                <Label x:Name="ComplexityLabel" Text="" />  
-
-                <Label Text="Influence:" FontAttributes="Bold" />  
-                <Label x:Name="InfluenceLabel" Text="" />  
-
-                <Label Text="Outcome:" FontAttributes="Bold" />  
-                <Label x:Name="OutcomeLabel" Text="" />  
-
-                <Label Text="Reflection:" FontAttributes="Bold" />  
-                <Label x:Name="ReflectionLabel" Text="" />  
-
-                <Label Text="Areas For Improvement:" FontAttributes="Bold" />  
-                <Label x:Name="AreasForImprovmentLabel" Text="" />  
-
-                <Label Text="Total Score:" FontAttributes="Bold" />  
-                <Label x:Name="TotalScoreLabel" Text="" />  
-            </VerticalStackLayout>  
-        </ScrollView>  
+        <!-- Removed StoryScore display fields from main page -->
+        <!-- The score details will now be shown in a popup window -->
     </VerticalStackLayout>  
 </ContentPage>

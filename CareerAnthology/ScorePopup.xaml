@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CareerAnthology.ScorePopup"
+             BackgroundColor="#CCFFFFFF"
+             Padding="30">
+    <Frame CornerRadius="16" Padding="20" BackgroundColor="White" HasShadow="True" VerticalOptions="Center" HorizontalOptions="Center">
+        <ScrollView HeightRequest="400">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Relevance:" FontAttributes="Bold" />
+                <Label x:Name="RelevanceLabel" Text="" />
+
+                <Label Text="Ownership:" FontAttributes="Bold" />
+                <Label x:Name="OwnershipLabel" Text="" />
+
+                <Label Text="Complexity:" FontAttributes="Bold" />
+                <Label x:Name="ComplexityLabel" Text="" />
+
+                <Label Text="Influence:" FontAttributes="Bold" />
+                <Label x:Name="InfluenceLabel" Text="" />
+
+                <Label Text="Outcome:" FontAttributes="Bold" />
+                <Label x:Name="OutcomeLabel" Text="" />
+
+                <Label Text="Reflection:" FontAttributes="Bold" />
+                <Label x:Name="ReflectionLabel" Text="" />
+
+                <Label Text="Areas For Improvement:" FontAttributes="Bold" />
+                <Label x:Name="AreasForImprovmentLabel" Text="" />
+
+                <Label Text="Total Score:" FontAttributes="Bold" />
+                <Label x:Name="TotalScoreLabel" Text="" />
+
+                <Button Text="Close" Clicked="OnCloseClicked" Margin="0,20,0,0" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Frame>
+</ContentPage>

@@ -76,4 +76,10 @@
 	  <ProjectReference Include="..\StoryMaker\StoryMaker.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="ScorePopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
