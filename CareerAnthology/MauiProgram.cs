@@ -16,18 +16,21 @@ namespace CareerAnthology
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            builder.Configuration.AddConfiguration(config);
+            var configBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true);
 
             builder.Logging.AddConsole();
 
-
 #if DEBUG
+            configBuilder.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
             builder.Logging.AddDebug();
+#else
+            configBuilder.AddJsonFile("appsettings.Production.json", optional: true, reloadOnChange: true);
 #endif
+
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
+            builder.Configuration.AddConfiguration(config);
 
             builder.Services.AddSingleton<MainPage>();
 

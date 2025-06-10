@@ -4,7 +4,7 @@
              x:Class="CareerAnthology.ScorePopup"  
              BackgroundColor="#CCFFFFFF"  
              Padding="30">
-    <Border StrokeThickness="1" BackgroundColor="White" Padding="20" Stroke="Black" StrokeShape="RoundRectangle 40,0,0,40" VerticalOptions="Center" HorizontalOptions="Center">  
+    <Border StrokeThickness="1" BackgroundColor="White" Padding="20" Stroke="Black" StrokeShape="RoundRectangle 16,16,16,16" VerticalOptions="Center" HorizontalOptions="Center">  
         <VerticalStackLayout Spacing="8">
             <ScrollView HeightRequest="400">  
                 <VerticalStackLayout Spacing="8">  

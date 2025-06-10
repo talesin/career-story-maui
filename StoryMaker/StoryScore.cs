@@ -82,7 +82,7 @@ Career Story
             var prompt = new StoryScorePrompt(storyText).ToString();
 
             List<ChatMessage> messages = [
-                new SystemChatMessage("You are an expert in evaluating career stories using the STAR format rubric. Your task is to provide a detailed evaluation of the story provided in the next message."),
+                new SystemChatMessage("You are an expert in evaluating career stories using the STAR format rubric. Your task is to provide a detailed evaluation of the story provided in the next message. Your standards are high, you will be critical yet fair."),
                 new UserChatMessage(prompt)
                 ];
 
@@ -97,13 +97,15 @@ Career Story
                 ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
                     jsonSchemaFormatName: "story_score",
                     jsonSchema: BinaryData.FromString(StoryScore.Schema.ToString()),
-                    jsonSchemaIsStrict: true)
+                    jsonSchemaIsStrict: true),
+                
             };
 
             try
             {
                 // Send the prompt to the OpenAI API and get the response
                 var result = await chatClient.CompleteChatAsync(messages, options);
+
 
                 return string.Concat(result.Value.Content.Select(c => c.Text));
             }
