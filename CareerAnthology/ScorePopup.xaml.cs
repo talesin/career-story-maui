@@ -16,7 +16,7 @@ namespace CareerAnthology
             OutcomeLabel.Text = FormatCriteria(storyScore.Outcome);
             ReflectionLabel.Text = FormatCriteria(storyScore.Reflection);
             AreasForImprovmentLabel.Text = string.Join(Environment.NewLine, storyScore.AreasForImprovment ?? Array.Empty<string>());
-            TotalScoreLabel.Text = $"{storyScore.PercentageScore}/100";
+            OverallLabel.Text = $"{storyScore.Overall} ({storyScore.PercentageScore}/100)";
         }
 
         private static string FormatCriteria(Criteria criteria)

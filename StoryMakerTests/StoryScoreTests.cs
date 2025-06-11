@@ -1,11 +1,21 @@
 ﻿using System.Text.Json;
 using StoryMaker;
 using Xunit;
+using Moq;
+using Microsoft.Extensions.Logging;
+using OpenAI;
+using OpenAI.Chat;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.ClientModel;
 
 namespace StoryGenTests
 {
     public class StoryScoreTests
     {
+        // Helper classes for mocking the return value
+ 
         [Theory]
         [InlineData(CriteriaScore.Weak, "Weak")]
         [InlineData(CriteriaScore.BelowAverage, "BelowAverage")]
@@ -48,7 +58,6 @@ namespace StoryGenTests
             // 5 + 4 + 3 + 2 + 1 + 4 = 19
             Assert.Equal(19, score.TotalScore);
         }
-
 
         [Fact]
         public void StoryEvaluator_Parse_ReturnsNullOnNullInput()
@@ -116,6 +125,80 @@ namespace StoryGenTests
             var schemaJson = StoryScore.Schema.ToString();
             Assert.DoesNotContain("TotalScore", schemaJson);
         }
-    }
 
+        [Fact]
+        public async Task StoryEvaluator_Evaluate_Static_ReturnsExpectedJson()
+        {
+            // Arrange
+            var storyText = "A test story";
+            var expectedJson = """
+            {
+              "Relevance": { "Score": 5, "Explanation": "Relevant" },
+              "Ownership": { "Score": 4, "Explanation": "Owned" },
+              "Complexity": { "Score": 3, "Explanation": "Complex" },
+              "Influence": { "Score": 2, "Explanation": "Influenced" },
+              "Outcome": { "Score": 1, "Explanation": "Outcome" },
+              "Reflection": { "Score": 4, "Explanation": "Reflected" },
+              "AreasForImprovment": [ "Improve X" ]
+            }
+            """;
+
+            var mockLogger = new Mock<ILogger>();
+            var mockChatClient = new Mock<IChatClient>();
+            mockChatClient.Setup(c => c.GetFormattedResponseAsync(It.IsAny<IEnumerable<StoryMaker.ChatMessage>>(), It.IsAny<JsonSchema>()))
+                .ReturnsAsync(new ChatResponse([new(expectedJson, ChatResponseType.Text)]));
+
+            var mockChatManager = new Mock<IChatManager>();
+            mockChatManager.Setup(m => m.GetChatClient(It.IsAny<string>())).Returns(mockChatClient.Object);
+
+            // Act
+            var result = await StoryEvaluator.Evaluate(mockChatManager.Object, mockLogger.Object, storyText);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Contains("Relevance", result);
+            Assert.Contains("AreasForImprovment", result);
+        }
+
+        [Fact]
+        public async Task StoryEvaluator_Evaluate_Instance_ReturnsStoryScore()
+        {
+            // Arrange
+            var storyText = "A test story";
+            var expectedJson = """
+            {
+              "Relevance": { "Score": 5, "Explanation": "Relevant" },
+              "Ownership": { "Score": 4, "Explanation": "Owned" },
+              "Complexity": { "Score": 3, "Explanation": "Complex" },
+              "Influence": { "Score": 2, "Explanation": "Influenced" },
+              "Outcome": { "Score": 1, "Explanation": "Outcome" },
+              "Reflection": { "Score": 4, "Explanation": "Reflected" },
+              "AreasForImprovment": [ "Improve X" ]
+            }
+            """;
+
+            var mockLogger = new Mock<ILogger>();
+            var mockChatClient = new Mock<IChatClient>();
+            mockChatClient.Setup(c => c.GetFormattedResponseAsync(It.IsAny<IEnumerable<StoryMaker.ChatMessage>>(), It.IsAny<JsonSchema>()))
+                .ReturnsAsync(new ChatResponse([new(expectedJson, ChatResponseType.Text)]));
+
+            var mockChatManager = new Mock<IChatManager>();
+            mockChatManager.Setup(m => m.GetChatClient(It.IsAny<string>())).Returns(mockChatClient.Object);
+
+            var evaluator = new StoryEvaluator(mockChatManager.Object, mockLogger.Object);
+
+            // Act
+            var score = await evaluator.Evaluate(storyText);
+
+            // Assert
+            Assert.NotNull(score);
+            Assert.Equal(CriteriaScore.Excellent, score.Relevance.Score);
+            Assert.Equal(CriteriaScore.Strong, score.Ownership.Score);
+            Assert.Equal(CriteriaScore.Solid, score.Complexity.Score);
+            Assert.Equal(CriteriaScore.BelowAverage, score.Influence.Score);
+            Assert.Equal(CriteriaScore.Weak, score.Outcome.Score);
+            Assert.Equal(CriteriaScore.Strong, score.Reflection.Score);
+            Assert.Contains("Improve X", score.AreasForImprovment);
+        }
+    }
 }
