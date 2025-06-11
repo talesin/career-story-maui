@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using OpenAI;
-using OpenAI.Chat;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Schema;
@@ -48,6 +46,11 @@ namespace StoryMaker
 
         [JsonIgnore]
         public int PercentageScore => (int)((TotalScore / 30.0) * 100);
+
+        [JsonIgnore]
+        public CriteriaScore Overall => Try
+            .lift(() => (CriteriaScore)(TotalScore / 6))
+            .IfFail((e) => CriteriaScore.Weak);
     }
 
     public record StoryScorePrompt(string StoryText)
@@ -74,62 +77,42 @@ Career Story
     }
 
 
-    public class StoryEvaluator(OpenAIClient client, ILogger logger)
+    public class StoryEvaluator(IChatManager chatManager, ILogger logger)
     {
-        public static async Task<string?> Evaluate(OpenAIClient client, ILogger logger, string storyText)
+        public static async Task<string?> Evaluate(IChatManager chatManager, ILogger logger, string storyText)
         {
             // Create a prompt using StoryScorePrompt
             var prompt = new StoryScorePrompt(storyText).ToString();
 
             List<ChatMessage> messages = [
-                new SystemChatMessage("You are an expert in evaluating career stories using the STAR format rubric. Your task is to provide a detailed evaluation of the story provided in the next message. Your standards are high, you will be critical yet fair."),
-                new UserChatMessage(prompt)
+                new SystemMessage("You are an expert in evaluating career stories using the STAR format rubric. Your task is to provide a detailed evaluation of the story provided in the next message. Your standards are high, you will be critical yet fair."),
+                new UserMessage(prompt)
                 ];
 
-            logger.LogInformation("Prompt: {prompt}", prompt);
+            logger.LogDebug("Prompt: {prompt}", prompt);
 
-            //OpenAIClient client = new (Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
-
-            var chatClient = client.GetChatClient("gpt-4o");
-
-            ChatCompletionOptions options = new()
-            {
-                ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
-                    jsonSchemaFormatName: "story_score",
-                    jsonSchema: BinaryData.FromString(StoryScore.Schema.ToString()),
-                    jsonSchemaIsStrict: true),
-                
-            };
+            var chatClient = chatManager.GetChatClient("gpt-4o");
 
             try
             {
-                // Send the prompt to the OpenAI API and get the response
-                var result = await chatClient.CompleteChatAsync(messages, options);
-
-
-                return string.Concat(result.Value.Content.Select(c => c.Text));
+                var result = await chatClient.GetFormattedResponseAsync(messages, new JsonSchema(StoryScore.Schema, "story_score", true));
+                var response = result.Items.Select(c => c.Text).FirstOrDefault();
+                logger.LogDebug("Response: {response}", response);
+                return response;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error evaluating story");
+                logger.LogError(ex, "Error evaluating story: {storyText}", storyText);
                 return null;
             }
-        }
+          }
 
-        public static StoryScore? Parse(string? json)
-        {
-            if (json == null)
-            {
-                return null;
-            }
+        public static StoryScore? Parse(string? json) =>
+                json == null ? null : JsonDocument
+                .Parse(json)
+                .Deserialize<StoryScore>();
 
-            var scoreJson = JsonDocument.Parse(json);
-            var storyScore = scoreJson.Deserialize<StoryScore>();
-
-            return storyScore;
-        }
-
-        public async Task<StoryScore?> Evaluate(string storyText) => Parse(await Evaluate(client, logger, storyText));
+        public async Task<StoryScore?> Evaluate(string storyText) => Parse(await Evaluate(chatManager, logger, storyText));
     }
 
 }

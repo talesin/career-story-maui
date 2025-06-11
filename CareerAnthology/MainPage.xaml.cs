@@ -36,9 +36,13 @@ namespace CareerAnthology
         {
             if (hasStoryChanged)
             {
-                OpenAIClient client = new(openAIApiKey);
+                OpenAIChatManager client = new(new(openAIApiKey), logger);
                 StoryEvaluator evaluator = new(client, logger);
-                storyScore = await evaluator.Evaluate(Story.Text); 
+                Score.IsEnabled = false;
+                Story.IsEnabled = false;
+                storyScore = await evaluator.Evaluate(Story.Text);
+                Score.IsEnabled = true;
+                Story.IsEnabled = true;
                 hasStoryChanged = false; // Reset the change tracker
             }
 

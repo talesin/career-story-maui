@@ -29,8 +29,8 @@
                     <Label Text="Areas For Improvement:" FontAttributes="Bold" />  
                     <Label x:Name="AreasForImprovmentLabel" Text="" />  
 
-                    <Label Text="Total Score:" FontAttributes="Bold" />  
-                    <Label x:Name="TotalScoreLabel" Text="" />  
+                    <Label Text="Overall:" FontAttributes="Bold" />  
+                    <Label x:Name="OverallLabel" Text="" />  
                 </VerticalStackLayout>  
             </ScrollView>  
             <Button Text="Close" Clicked="OnCloseClicked" Margin="0,20,0,0" />  
