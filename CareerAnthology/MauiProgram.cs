@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using OpenAI;
+using StoryMaker;
 
 namespace CareerAnthology
 {
@@ -32,7 +34,15 @@ namespace CareerAnthology
             var config = configBuilder.Build();
             builder.Configuration.AddConfiguration(config);
 
-            builder.Services.AddSingleton<MainPage>();
+            var openAIApiKey = config["openai_api_key"] ?? throw new InvalidOperationException("OpenAI API key is not configured in the app settings.");
+
+
+            builder.Services
+                .AddSingleton<MainPage>()
+                .AddSingleton<IStoryEvaluator, StoryEvaluator>()
+                .AddSingleton<IChatManager, OpenAIChatManager>()
+                .AddSingleton(new OpenAIClient(openAIApiKey));
+            
 
             return builder.Build();
         }

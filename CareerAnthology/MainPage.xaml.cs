@@ -11,16 +11,16 @@ namespace CareerAnthology
     {
         private readonly IConfiguration config;
         private readonly ILogger<MainPage> logger;
-        private readonly string openAIApiKey;
+        private readonly IStoryEvaluator storyEvaluator;
         private bool hasStoryChanged = false;
         private StoryScore? storyScore = null;
 
-        public MainPage(IConfiguration config, ILogger<MainPage> logger)
+        public MainPage(IConfiguration config, ILogger<MainPage> logger, IStoryEvaluator storyEvaluator)
         {
             InitializeComponent();
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.config = config ?? throw new ArgumentNullException(nameof(config));
-            openAIApiKey = this.config["openai_api_key"] ?? throw new InvalidOperationException("OpenAI API key is not configured in the app settings."); 
+            this.storyEvaluator = storyEvaluator ?? throw new ArgumentNullException(nameof(storyEvaluator));
         }
 
 
@@ -36,11 +36,9 @@ namespace CareerAnthology
         {
             if (hasStoryChanged)
             {
-                OpenAIChatManager client = new(new(openAIApiKey), logger);
-                StoryEvaluator evaluator = new(client, logger);
                 Score.IsEnabled = false;
                 Story.IsEnabled = false;
-                storyScore = await evaluator.Evaluate(Story.Text);
+                storyScore = await storyEvaluator.Evaluate(Story.Text);
                 Score.IsEnabled = true;
                 Story.IsEnabled = true;
                 hasStoryChanged = false; // Reset the change tracker

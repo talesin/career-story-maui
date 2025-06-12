@@ -36,7 +36,7 @@ namespace StoryMaker
     }
 
 
-    public class OpenAIChatManager(OpenAIClient client, ILogger logger) : IChatManager
+    public class OpenAIChatManager(OpenAIClient client, ILogger<OpenAIChatManager> logger) : IChatManager
     {
         private readonly OpenAIClient client = client ?? throw new ArgumentNullException(nameof(client));
         private readonly ILogger logger = logger ?? throw new ArgumentNullException(nameof(logger));

@@ -76,8 +76,12 @@ Career Story
         public override string ToString() => prompt;
     }
 
+    public interface IStoryEvaluator
+    {
+        Task<StoryScore?> Evaluate(string storyText);
+    }
 
-    public class StoryEvaluator(IChatManager chatManager, ILogger logger)
+    public class StoryEvaluator(IChatManager chatManager, ILogger<StoryEvaluator> logger) : IStoryEvaluator
     {
         public static async Task<string?> Evaluate(IChatManager chatManager, ILogger logger, string storyText)
         {
@@ -105,7 +109,7 @@ Career Story
                 logger.LogError(ex, "Error evaluating story: {storyText}", storyText);
                 return null;
             }
-          }
+        }
 
         public static StoryScore? Parse(string? json) =>
                 json == null ? null : JsonDocument
