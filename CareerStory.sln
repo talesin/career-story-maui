@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36202.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerAnthology", "CareerAnthology\CareerAnthology.csproj", "{A929C012-81BD-4089-82C5-F5CABB25AACE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerStory", "CareerStory\CareerStory.csproj", "{A929C012-81BD-4089-82C5-F5CABB25AACE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoryMaker", "StoryMaker\StoryMaker.csproj", "{0F307C35-5BBF-48F5-9EC1-1B1BA2D7E239}"
 EndProject

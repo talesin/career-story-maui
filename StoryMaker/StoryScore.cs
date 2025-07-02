@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Schema;
@@ -76,8 +78,12 @@ Career Story
         public override string ToString() => prompt;
     }
 
+    public interface IStoryEvaluator
+    {
+        Task<StoryScore?> Evaluate(string storyText);
+    }
 
-    public class StoryEvaluator(IChatManager chatManager, ILogger logger)
+    public class StoryEvaluator(IChatManager chatManager, ILogger<StoryEvaluator> logger) : IStoryEvaluator
     {
         public static async Task<string?> Evaluate(IChatManager chatManager, ILogger logger, string storyText)
         {
@@ -105,12 +111,14 @@ Career Story
                 logger.LogError(ex, "Error evaluating story: {storyText}", storyText);
                 return null;
             }
-          }
+        }
 
         public static StoryScore? Parse(string? json) =>
-                json == null ? null : JsonDocument
-                .Parse(json)
-                .Deserialize<StoryScore>();
+            Optional(json)
+            .Map(x => JsonDocument
+            .Parse(x)
+            .Deserialize<StoryScore>())
+            .IfNone(() => null);
 
         public async Task<StoryScore?> Evaluate(string storyText) => Parse(await Evaluate(chatManager, logger, storyText));
     }

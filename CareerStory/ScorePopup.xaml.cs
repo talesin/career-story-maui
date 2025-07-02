@@ -2,7 +2,7 @@ using Microsoft.Maui.Controls;
 using StoryMaker;
 using System;
 
-namespace CareerAnthology
+namespace CareerStory
 {
     public partial class ScorePopup : ContentPage
     {

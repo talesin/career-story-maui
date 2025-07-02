@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
-             x:Class="CareerAnthology.ScorePopup"  
+             x:Class="CareerStory.ScorePopup"  
              BackgroundColor="#CCFFFFFF"  
              Padding="30">
     <Border StrokeThickness="1" BackgroundColor="White" Padding="20" Stroke="Black" StrokeShape="RoundRectangle 16,16,16,16" VerticalOptions="Center" HorizontalOptions="Center">  

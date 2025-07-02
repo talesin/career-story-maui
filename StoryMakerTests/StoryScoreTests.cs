@@ -143,7 +143,7 @@ namespace StoryGenTests
             }
             """;
 
-            var mockLogger = new Mock<ILogger>();
+            var mockLogger = new Mock<ILogger<StoryEvaluator>>();
             var mockChatClient = new Mock<IChatClient>();
             mockChatClient.Setup(c => c.GetFormattedResponseAsync(It.IsAny<IEnumerable<StoryMaker.ChatMessage>>(), It.IsAny<JsonSchema>()))
                 .ReturnsAsync(new ChatResponse([new(expectedJson, ChatResponseType.Text)]));
@@ -177,7 +177,7 @@ namespace StoryGenTests
             }
             """;
 
-            var mockLogger = new Mock<ILogger>();
+            var mockLogger = new Mock<ILogger<StoryEvaluator>>();
             var mockChatClient = new Mock<IChatClient>();
             mockChatClient.Setup(c => c.GetFormattedResponseAsync(It.IsAny<IEnumerable<StoryMaker.ChatMessage>>(), It.IsAny<JsonSchema>()))
                 .ReturnsAsync(new ChatResponse([new(expectedJson, ChatResponseType.Text)]));

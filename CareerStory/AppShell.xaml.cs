@@ -1,4 +1,4 @@
-﻿namespace CareerAnthology
+﻿namespace CareerStory
 {
     public partial class AppShell : Shell
     {
