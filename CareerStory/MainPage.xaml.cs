@@ -5,7 +5,7 @@ using StoryMaker;
 using System;
 using Microsoft.Maui.Controls;
 
-namespace CareerAnthology
+namespace CareerStory
 {
     public partial class MainPage : ContentPage
     {

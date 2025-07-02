@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Schema;
@@ -112,9 +114,11 @@ Career Story
         }
 
         public static StoryScore? Parse(string? json) =>
-                json == null ? null : JsonDocument
-                .Parse(json)
-                .Deserialize<StoryScore>();
+            Optional(json)
+            .Map(x => JsonDocument
+            .Parse(x)
+            .Deserialize<StoryScore>())
+            .IfNone(() => null);
 
         public async Task<StoryScore?> Evaluate(string storyText) => Parse(await Evaluate(chatManager, logger, storyText));
     }

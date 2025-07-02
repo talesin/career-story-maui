@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace CareerAnthology
+namespace CareerStory
 {
     public class Program
     {

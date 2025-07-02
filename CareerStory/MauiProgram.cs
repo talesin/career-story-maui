@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using OpenAI;
 using StoryMaker;
 
-namespace CareerAnthology
+namespace CareerStory
 {
     public static class MauiProgram
     {

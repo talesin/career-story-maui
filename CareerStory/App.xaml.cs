@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Extensions.Configuration;
 
-namespace CareerAnthology
+namespace CareerStory
 {
     public partial class App : Application
     {

@@ -1,7 +1,7 @@
-﻿using CareerAnthology;
+﻿using CareerStory;
 using Foundation;
 
-namespace CareerAnthology
+namespace CareerStory
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

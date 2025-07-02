@@ -1,8 +1,8 @@
 ﻿using Android.App;
 using Android.Runtime;
-using CareerAnthology;
+using CareerStory;
 
-namespace CareerAnthology
+namespace CareerStory
 {
     [Application]
     public class MainApplication : MauiApplication
