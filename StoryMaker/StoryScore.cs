@@ -65,7 +65,7 @@ namespace StoryMaker
         Influence Influence,
         Outcome Outcome,
         Reflection Reflection,
-        string[] AreasForImprovment)
+        string[] AreasForImprovement)
     {
         /// <summary>
         /// JSON schema for the StoryScore object.
@@ -101,9 +101,15 @@ namespace StoryMaker
         /// Gets the overall criteria score.
         /// </summary>
         [JsonIgnore]
-        public CriteriaScore Overall => Try
-            .lift(() => (CriteriaScore)(TotalScore / 6))
-            .IfFail((e) => CriteriaScore.Weak);
+        public CriteriaScore Overall => TotalScore switch
+        {
+            >= 1 and <= 6 => CriteriaScore.Weak,
+            >= 7 and <= 12 => CriteriaScore.BelowAverage,
+            >= 13 and <= 18 => CriteriaScore.Solid,
+            >= 19 and <= 24 => CriteriaScore.Strong,
+            >= 25 and <= 30 => CriteriaScore.Excellent,
+            _ => CriteriaScore.Weak
+        };
     }
 
     /// <summary>
@@ -159,52 +165,107 @@ Career Story
         /// <param name="chatManager">The chat manager to use.</param>
         /// <param name="logger">The logger to use.</param>
         /// <param name="storyText">The story to evaluate.</param>
-        /// <returns>The raw JSON response as a string, or null if evaluation fails.</returns>
-        public static async Task<string?> Evaluate(IChatManager chatManager, ILogger logger, string storyText)
+        /// <returns>The raw JSON response wrapped in a Try monad.</returns>
+        public static async Task<Try<string>> EvaluateAsync(IChatManager chatManager, ILogger logger, string storyText)
         {
-            // Create a prompt using StoryScorePrompt
-            var prompt = new StoryScorePrompt(storyText).ToString();
-
-            List<ChatMessage> messages = [
-                new SystemMessage("You are an expert in evaluating career stories using the STAR format rubric. Your task is to provide a detailed evaluation of the story provided in the next message. Your standards are high, you will be critical yet fair."),
-                new UserMessage(prompt)
-                ];
-
-            logger.LogDebug("Prompt: {prompt}", prompt);
-
-            var chatClient = chatManager.GetChatClient("gpt-4o");
-
             try
             {
+                var prompt = new StoryScorePrompt(storyText).ToString();
+                
+                List<ChatMessage> messages = [
+                    new SystemMessage("You are an expert in evaluating career stories using the STAR format rubric. Your task is to provide a detailed evaluation of the story provided in the next message. Your standards are high, you will be critical yet fair."),
+                    new UserMessage(prompt)
+                ];
+
+                logger.LogDebug("Prompt: {prompt}", prompt);
+
+                var chatClient = chatManager.GetChatClient("gpt-4o");
                 var result = await chatClient.GetFormattedResponseAsync(messages, new JsonSchema(StoryScore.Schema, "story_score", true));
                 var response = result.Items.Select(c => c.Text).FirstOrDefault();
+                
                 logger.LogDebug("Response: {response}", response);
-                return response;
+                
+                var finalResponse = response ?? throw new InvalidOperationException("No response received from chat client");
+                return Try<string>.Succ(finalResponse);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error evaluating story: {storyText}", storyText);
-                return null;
+                return Try<string>.Fail(ex);
             }
         }
 
         /// <summary>
-        /// Parses a JSON string into a StoryScore object.
+        /// Legacy method for backward compatibility. Use EvaluateAsync for better functional patterns.
+        /// </summary>
+        /// <param name="chatManager">The chat manager to use.</param>
+        /// <param name="logger">The logger to use.</param>
+        /// <param name="storyText">The story to evaluate.</param>
+        /// <returns>The raw JSON response as a string, or null if evaluation fails.</returns>
+        public static async Task<string?> Evaluate(IChatManager chatManager, ILogger logger, string storyText)
+        {
+            var result = await EvaluateAsync(chatManager, logger, storyText);
+            return result.Match(
+                Succ: response => response,
+                Fail: _ => null
+            );
+        }
+
+        /// <summary>
+        /// Parses a JSON string into a StoryScore object using functional patterns.
+        /// </summary>
+        /// <param name="json">The JSON string to parse.</param>
+        /// <returns>The parsed StoryScore wrapped in an Option type.</returns>
+        public static Option<StoryScore> ParseOption(string? json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return None;
+
+            try
+            {
+                var score = JsonDocument.Parse(json).Deserialize<StoryScore>();
+                return Optional(score).Where(s => s != null).Map(s => s!);
+            }
+            catch
+            {
+                return None;
+            }
+        }
+
+        /// <summary>
+        /// Legacy parse method for backward compatibility.
         /// </summary>
         /// <param name="json">The JSON string to parse.</param>
         /// <returns>The parsed StoryScore, or null if parsing fails.</returns>
         public static StoryScore? Parse(string? json) =>
-            Optional(json)
-            .Map(x => JsonDocument
-            .Parse(x)
-            .Deserialize<StoryScore>())
-            .IfNone(() => null);
+            ParseOption(json).Match(
+                Some: score => score,
+                None: () => null
+            );
 
         /// <summary>
-        /// Evaluates a story and returns a StoryScore.
+        /// Evaluates a story and returns a StoryScore using functional patterns.
+        /// </summary>
+        /// <param name="storyText">The story to evaluate.</param>
+        /// <returns>The evaluated StoryScore wrapped in an Option type.</returns>
+        public async Task<Option<StoryScore>> EvaluateAsync(string storyText)
+        {
+            var result = await EvaluateAsync(chatManager, logger, storyText);
+            return result.Match(
+                Succ: json => ParseOption(json),
+                Fail: _ => None
+            );
+        }
+
+        /// <summary>
+        /// Legacy evaluate method for backward compatibility.
         /// </summary>
         /// <param name="storyText">The story to evaluate.</param>
         /// <returns>The evaluated StoryScore, or null if evaluation fails.</returns>
-        public async Task<StoryScore?> Evaluate(string storyText) => Parse(await Evaluate(chatManager, logger, storyText));
+        public async Task<StoryScore?> Evaluate(string storyText) => 
+            (await EvaluateAsync(storyText)).Match(
+                Some: score => score,
+                None: () => null
+            );
     }
 }

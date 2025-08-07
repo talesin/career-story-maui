@@ -101,3 +101,6 @@ crashlytics-build.properties
 # End of Visual Studio ignores
 
 *.swp
+
+.claude
+.vscode

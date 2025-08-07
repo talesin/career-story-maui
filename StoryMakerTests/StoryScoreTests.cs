@@ -76,7 +76,7 @@ namespace StoryGenTests
                 "Influence": { "Score": 2, "Explanation": "Limited influence" },
                 "Outcome": { "Score": 1, "Explanation": "Weak outcome" },
                 "Reflection": { "Score": 4, "Explanation": "Good reflection" },
-                "AreasForImprovment": [ "Clarify results" ]
+                "AreasForImprovement": [ "Clarify results" ]
             }
             """;
             var result = StoryEvaluator.Parse(json);
@@ -84,14 +84,15 @@ namespace StoryGenTests
             Assert.Equal(CriteriaScore.Excellent, result.Relevance.Score);
             Assert.Equal("Very relevant", result.Relevance.Explanation);
             Assert.Equal(19, result.TotalScore);
-            Assert.Contains("Clarify results", result.AreasForImprovment);
+            Assert.Contains("Clarify results", result.AreasForImprovement);
         }
 
         [Fact]
-        public void StoryEvaluator_Parse_ThrowsOnMalformedJson()
+        public void StoryEvaluator_Parse_ReturnsNullOnMalformedJson()
         {
             var badJson = "{ this is not valid json }";
-            Assert.ThrowsAny<JsonException>(() => StoryEvaluator.Parse(badJson));
+            var result = StoryEvaluator.Parse(badJson);
+            Assert.Null(result);
         }
 
         [Fact]
@@ -108,8 +109,9 @@ namespace StoryGenTests
         [Fact]
         public void StoryScorePrompt_ToString_ContainsNonNullSchema()
         {
-
-            Assert.StartsWith("{\r\n  \"type\": \"object\",", StoryScore.Schema.ToString());
+            var schemaString = StoryScore.Schema.ToString();
+            Assert.Contains("\"type\": \"object\"", schemaString);
+            Assert.Contains("\"properties\"", schemaString);
         }
 
         [Fact]
@@ -139,7 +141,7 @@ namespace StoryGenTests
               "Influence": { "Score": 2, "Explanation": "Influenced" },
               "Outcome": { "Score": 1, "Explanation": "Outcome" },
               "Reflection": { "Score": 4, "Explanation": "Reflected" },
-              "AreasForImprovment": [ "Improve X" ]
+              "AreasForImprovement": [ "Improve X" ]
             }
             """;
 
@@ -157,7 +159,7 @@ namespace StoryGenTests
             // Assert
             Assert.NotNull(result);
             Assert.Contains("Relevance", result);
-            Assert.Contains("AreasForImprovment", result);
+            Assert.Contains("AreasForImprovement", result);
         }
 
         [Fact]
@@ -173,7 +175,7 @@ namespace StoryGenTests
               "Influence": { "Score": 2, "Explanation": "Influenced" },
               "Outcome": { "Score": 1, "Explanation": "Outcome" },
               "Reflection": { "Score": 4, "Explanation": "Reflected" },
-              "AreasForImprovment": [ "Improve X" ]
+              "AreasForImprovement": [ "Improve X" ]
             }
             """;
 
@@ -198,7 +200,7 @@ namespace StoryGenTests
             Assert.Equal(CriteriaScore.BelowAverage, score.Influence.Score);
             Assert.Equal(CriteriaScore.Weak, score.Outcome.Score);
             Assert.Equal(CriteriaScore.Strong, score.Reflection.Score);
-            Assert.Contains("Improve X", score.AreasForImprovment);
+            Assert.Contains("Improve X", score.AreasForImprovement);
         }
     }
 }

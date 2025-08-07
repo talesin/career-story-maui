@@ -1,65 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using OpenAI;
-using StoryMaker;
-using System;
-using Microsoft.Maui.Controls;
+using CareerStory.ViewModels;
 
-namespace CareerStory
+namespace CareerStory;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    public MainPage(MainPageViewModel viewModel)
     {
-        private readonly IConfiguration config;
-        private readonly ILogger<MainPage> logger;
-        private readonly IStoryEvaluator storyEvaluator;
-        private bool hasStoryChanged = false;
-        private StoryScore? storyScore = null;
-
-        public MainPage(IConfiguration config, ILogger<MainPage> logger, IStoryEvaluator storyEvaluator)
-        {
-            InitializeComponent();
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.config = config ?? throw new ArgumentNullException(nameof(config));
-            this.storyEvaluator = storyEvaluator ?? throw new ArgumentNullException(nameof(storyEvaluator));
-        }
-
-
-        private void OnStoryTextChanged(object sender, TextChangedEventArgs e)
-        {
-            bool hasText = !string.IsNullOrWhiteSpace(Story.Text);
-            Score.IsEnabled = hasText;
-            //Review.IsEnabled = hasText;
-            hasStoryChanged = true; // Track if the story text has changed
-        }
-
-        private async void OnScoreClicked(object? sender, EventArgs e)
-        {
-            if (hasStoryChanged)
-            {
-                Score.IsEnabled = false;
-                Story.IsEnabled = false;
-                storyScore = await storyEvaluator.Evaluate(Story.Text);
-                Score.IsEnabled = true;
-                Story.IsEnabled = true;
-                hasStoryChanged = false; // Reset the change tracker
-            }
-
-            if (storyScore != null)
-            {
-                var popup = new ScorePopup(storyScore);
-                await Navigation.PushModalAsync(popup);
-            }
-            else
-            {
-                await DisplayAlert("Error", "Failed to evaluate story.", "OK");
-            }
-        }
-
-        private async void OnReviewClicked(object? sender, EventArgs e)
-        {
-            await DisplayAlert("Acknowledgement", "Review button clicked!", "OK");
-        }
-     }
-    
-
+        InitializeComponent();
+        BindingContext = viewModel;
+    }
 }
