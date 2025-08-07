@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using OpenAI;
 using StoryMaker;
+using CareerStory.Services;
+using CareerStory.ViewModels;
 
 namespace CareerStory
 {
@@ -38,9 +40,14 @@ namespace CareerStory
 
 
             builder.Services
-                .AddSingleton<MainPage>()
-                .AddSingleton<IStoryEvaluator, StoryEvaluator>()
-                .AddSingleton<IChatManager, OpenAIChatManager>()
+                // Views and ViewModels
+                .AddTransient<MainPage>()
+                .AddTransient<MainPageViewModel>()
+                
+                // Services
+                .AddSingleton<INavigationService, NavigationService>()
+                .AddScoped<IStoryEvaluator, StoryEvaluator>()
+                .AddScoped<IChatManager, OpenAIChatManager>()
                 .AddSingleton(new OpenAIClient(openAIApiKey));
             
 

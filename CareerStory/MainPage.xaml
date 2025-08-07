@@ -1,34 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
-             x:Class="CareerStory.MainPage">  
+             x:Class="CareerStory.MainPage"
+             Title="{Binding Title}">  
 
     <VerticalStackLayout Padding="30" Spacing="16">
         <Editor  
-            x:Name="Story"  
+            Text="{Binding StoryText}"
             Placeholder="Enter your story here..."  
             AutoSize="TextChanges"  
             HeightRequest="250"  
-            FontSize="18"  
-            TextChanged="OnStoryTextChanged" />  
+            FontSize="18" />  
+
+        <!-- Error message display -->
+        <Border IsVisible="{Binding HasError}"
+                BackgroundColor="LightPink"
+                Stroke="Red"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 8"
+                Padding="10"
+                Margin="0,0,0,10">
+            <Label Text="{Binding ErrorMessage}" 
+                   TextColor="DarkRed"
+                   FontSize="14" />
+        </Border>
 
         <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">  
             <Button  
-                x:Name="Score"  
                 Text="Score"  
-                Clicked="OnScoreClicked"  
+                Command="{Binding ScoreStoryCommand}"
                 Grid.Column="0"  
-                IsEnabled="False" />  
+                IsEnabled="{Binding CanScore}" />  
 
             <Button  
-                x:Name="Review"  
                 Text="Review"  
-                Clicked="OnReviewClicked"  
+                Command="{Binding ReviewStoryCommand}"
                 Grid.Column="1"  
-                IsEnabled="False" />  
+                IsEnabled="{Binding CanReview}" />  
         </Grid>  
 
-        <!-- Removed StoryScore display fields from main page -->
+        <!-- Loading indicator -->
+        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                          IsRunning="{Binding IsBusy}"
+                          Color="Blue"
+                          HeightRequest="50" />
+
         <!-- The score details will now be shown in a popup window -->
     </VerticalStackLayout>  
 </ContentPage>
